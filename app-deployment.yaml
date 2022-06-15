@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-sql-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: spring-sql-k8
+
+  template:
+    metadata:
+      labels:
+        app: spring-sql-k8
+
+    spec:
+      containers:
+        - name: spring-sql
+          image: my-app:1.0.0
+
+          ports:
+            - containerPort: 8080
+
+          env:
+            - name: DB_HOST
+              value: mysql
+
+            - name: DB_NAME
+              value: order
+
+            - name: DB_USERNAME
+              value: root
+
+            - name: DB_PASSWORD
+              value: root
+
+            - name: DB_PORT
+                value: 3306
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-sql-svc
+
+spec:
+  selector:
+    app: spring-sql-k8
+
+  ports:
+    - protocol: "TCP"
+      port: 8080
+      targetPort: 8080
+
+  type: NodePort
+
